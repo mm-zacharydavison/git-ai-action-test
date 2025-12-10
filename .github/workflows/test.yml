@@ -1,0 +1,64 @@
+name: Test git-ai-action
+
+on:
+  workflow_dispatch:
+    inputs:
+      git-ai-version:
+        description: "git-ai version to test (e.g., v1.0.23, latest)"
+        required: false
+        default: "latest"
+
+jobs:
+  test-pr-close:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test PR Close action installation
+        uses: mm-zacharydavison/git-ai-action/pr-close@v1.0.0-test
+        continue-on-error: true
+        with:
+          git-ai-version: ${{ inputs.git-ai-version }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          pr-url: "https://github.com/test/test/pull/1"
+          merge-commit-sha: "abc123"
+
+      - name: Verify git-ai installed
+        run: |
+          echo "=== Checking git-ai installation ==="
+          which git-ai && git-ai --version || echo "git-ai not found in PATH"
+          ls -la ~/.git-ai/bin/ 2>/dev/null || echo "No ~/.git-ai/bin/ directory"
+
+          echo ""
+          echo "=== Checking git-ai-otel installation ==="
+          which git-ai-otel && git-ai-otel --version || echo "git-ai-otel not found"
+
+  test-daily-metrics:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test Daily Metrics action installation
+        uses: mm-zacharydavison/git-ai-action/daily-metrics@v1.0.0-test
+        continue-on-error: true
+        with:
+          git-ai-version: ${{ inputs.git-ai-version }}
+          default-branch: main
+
+      - name: Verify git-ai installed
+        run: |
+          echo "=== Checking git-ai installation ==="
+          which git-ai && git-ai --version || echo "git-ai not found in PATH"
+          ls -la ~/.git-ai/bin/ 2>/dev/null || echo "No ~/.git-ai/bin/ directory"
+
+          echo ""
+          echo "=== Checking git-ai-otel installation ==="
+          which git-ai-otel && git-ai-otel --version || echo "git-ai-otel not found"
+
+  test-old-version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test with old version (should fail gracefully)
+        uses: mm-zacharydavison/git-ai-action/pr-close@v1.0.0-test
+        continue-on-error: true
+        with:
+          git-ai-version: "v1.0.0"  # Too old, no install.sh in release
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          pr-url: "https://github.com/test/test/pull/1"
+          merge-commit-sha: "abc123"
