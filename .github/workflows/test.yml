@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Test PR Close action installation
-        uses: mm-zacharydavison/git-ai-action/pr-close@v1.0.0-test
+        uses: mm-zacharydavison/git-ai-action/pr-close@v1.0.1-test
         continue-on-error: true
         with:
           git-ai-version: ${{ inputs.git-ai-version }}
@@ -40,7 +40,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Test Daily Metrics action installation
-        uses: mm-zacharydavison/git-ai-action/daily-metrics@v1.0.0-test
+        uses: mm-zacharydavison/git-ai-action/daily-metrics@v1.0.1-test
         continue-on-error: true
         with:
           git-ai-version: ${{ inputs.git-ai-version }}
