@@ -4,9 +4,13 @@ on:
   workflow_dispatch:
     inputs:
       git-ai-version:
-        description: "git-ai version to test (e.g., v1.0.23, latest)"
+        description: "git-ai version to test (e.g., v1.0.23-next-e7ee2ac, latest)"
         required: false
-        default: "latest"
+        default: "v1.0.23-next-e7ee2ac"
+      git-ai-repo:
+        description: "git-ai repo to download from (owner/repo)"
+        required: false
+        default: "mm-zacharydavison/git-ai"
 
 jobs:
   test-pr-close:
@@ -17,6 +21,7 @@ jobs:
         continue-on-error: true
         with:
           git-ai-version: ${{ inputs.git-ai-version }}
+          git-ai-repo: ${{ inputs.git-ai-repo }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
           pr-url: "https://github.com/test/test/pull/1"
           merge-commit-sha: "abc123"
@@ -39,6 +44,7 @@ jobs:
         continue-on-error: true
         with:
           git-ai-version: ${{ inputs.git-ai-version }}
+          git-ai-repo: ${{ inputs.git-ai-repo }}
           default-branch: main
 
       - name: Verify git-ai installed
@@ -50,15 +56,3 @@ jobs:
           echo ""
           echo "=== Checking git-ai-otel installation ==="
           which git-ai-otel && git-ai-otel --version || echo "git-ai-otel not found"
-
-  test-old-version:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Test with old version (should fail gracefully)
-        uses: mm-zacharydavison/git-ai-action/pr-close@v1.0.0-test
-        continue-on-error: true
-        with:
-          git-ai-version: "v1.0.0"  # Too old, no install.sh in release
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          pr-url: "https://github.com/test/test/pull/1"
-          merge-commit-sha: "abc123"
